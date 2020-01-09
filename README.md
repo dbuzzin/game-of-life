@@ -1,6 +1,6 @@
 ## Game of Life
 
-[Click here to view](https://dbuzzin.github.io/game-of-life/)
+#### [Click Here to View](https://dbuzzin.github.io/game-of-life/)
 
 ### Current Features
 
