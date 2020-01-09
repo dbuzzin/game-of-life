@@ -1,5 +1,7 @@
 # Game of Life
 
+A game of life simulator. Read the rules, draw in some patterns and click start :)
+
 #### [Click Here to View](https://dbuzzin.github.io/game-of-life/)
 
 #### Rules
