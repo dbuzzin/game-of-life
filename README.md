@@ -21,7 +21,8 @@ A game of life simulator. Read the rules, draw in some patterns and click start 
 
 ### Coming Soon... (So far)
 
-+ Zoom on scroll
++ Make device responsive.
++ Zoom on scroll.
 + Speed adjust.
 + Step through next generations.
 + Randomise screen.
