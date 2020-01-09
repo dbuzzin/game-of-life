@@ -1,4 +1,4 @@
-## Game of Life
+# Game of Life
 
 #### [Click Here to View](https://dbuzzin.github.io/game-of-life/)
 
