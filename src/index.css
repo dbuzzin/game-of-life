@@ -44,9 +44,21 @@ body {
 .cell 	{
 
 	position				: absolute;
-	background-color		: #ffffff;
+	/* background-color		: #ffffff; */
 }
 
-.alive  { background-color	: #000000 }
-.dead   { background-color	: #ffffff }
+.cell--young {
+
+	background-color		: rgba(255, 255, 255, 1);
+}
+
+.cell--middle {
+
+	background-color		: rgba(255, 255, 255, 0.7);
+}
+
+.cell--old {
+
+	background-color		: rgba(255, 255, 255, 0.3);
+}
 

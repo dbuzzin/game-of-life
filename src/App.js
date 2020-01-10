@@ -11,11 +11,11 @@ class World extends Component {
 		this.width		= 800;
 		this.height		= 600;
 		this.cellSize	= 10;
-		this.cols 		= (this.width / (this.cellSize / 10));
-		this.rows 		= (this.height / (this.cellSize / 10));
+		this.cols 		= (this.width / (this.cellSize));
+		this.rows 		= (this.height / (this.cellSize));
 		this.fullGrid 	= (this.cols * this.rows);
 
-		this.world		= this.createWorld(false);
+		this.world		= this.createWorld();
 	}
 
 	state = {
@@ -42,7 +42,7 @@ class World extends Component {
 
 
 
-	createWorld = (cells = [], random = false) => {
+	createWorld = (random = false) => {
 
 		let world = [];
 
@@ -54,10 +54,10 @@ class World extends Component {
 
 				if(random) {
 
-					world[y][x] = this.getRandomNum() > (this.fullGrid / 2) ? true : false;
+					world[y][x] = this.getRandomNum() > (this.fullGrid - (this.fullGrid / 4)) ? true : false;
 				} else {
 
-					world[y][x] = cells;
+					world[y][x] = false;
 				}
 			}
 		}
@@ -69,7 +69,7 @@ class World extends Component {
 
 	createCells = () => {
 
-		let cells = [];
+		let cells 	= []
 
 		for(let y = 0; y < this.rows; y++) {
 
@@ -83,10 +83,9 @@ class World extends Component {
 		}
 		
 		return cells;
-
 	}
 
-
+	snap
 
 	getElemOffset = () => {
 		
@@ -149,14 +148,18 @@ class World extends Component {
 
 		if(x >= 0 && x <= cols && y >= 0 && y <= rows) {
 
-			// if(this.state.isDrawing) {
+			this.state.isErasing ? world[y][x] = false : world[y][x] = true;
 
-				this.state.isErasing ? world[y][x] = false : world[y][x] = true;
+			this.setState({cells: this.createCells()});
 
-				this.setState({cells: this.createCells()});
-
-			// }
 		}	
+	}
+
+
+
+	handleTouchMove = () => {
+
+
 	}
 
 
@@ -199,8 +202,6 @@ class World extends Component {
 
 		} else {
 
-			// console.log("Stopped");
-
 			if(this.timeoutHandler) {
 
 				window.clearTimeout(this.timeoutHandler);
@@ -213,8 +214,6 @@ class World extends Component {
 
 
 	checkNeighbours = (arr, x, y) => {
-
-		// console.log(arr);
 
 		let counter = 0;
 
@@ -248,9 +247,7 @@ class World extends Component {
 
 	nextGeneration = () => {
 
-		// console.log("Started");
-
-		let newWorld = this.createWorld(false);
+		let newWorld = this.createWorld();
 
 		for(let y = 0; y < this.rows; y++) {
 
@@ -267,7 +264,7 @@ class World extends Component {
 
 						newWorld[y][x] = false;
 					}
-					
+
 				} else {
 
 					if(!this.world[y][x] && neighbours === 3) {
@@ -283,7 +280,7 @@ class World extends Component {
 
 		this.setState({cells: this.createCells()});
 
-		this.setState(prevState => ({generation: prevState.generation++}));
+		this.setState(prevState => { generation: prevState.generation++ });
 
 		this.timeoutHandler = window.setTimeout(() => this.nextGeneration() , this.state.speed);
 	}
@@ -297,17 +294,35 @@ class World extends Component {
 
 
 
-	endWorld = () => {
+	clearWorld = () => {
 
-		this.setState({cells: []});
-		this.world = this.createWorld(false);
+		window.clearTimeout(this.timeoutHandler);
+		this.timeoutHandler = null;
+		
+		this.setState({
+			
+			generation: 1,
+			isPlaying: false,
+			isErasing: false,
+			cells: []
+		});
+
+		this.world = this.createWorld();
 	}
 
 
 
 	zoomOut = () => {
 
-		this.cellSize = 5;
+		// this.cellSize = 5;
+	}
+
+
+
+	randomisePattern = () => {
+
+		this.world = this.createWorld(true);
+		this.setState({cells: this.createCells()});
 	}
 
 
@@ -317,8 +332,6 @@ class World extends Component {
 		const { width, height, cellSize } = this;
 		const { cells } = this.state;
 
-		this.createCells();
-
 		return (
 
 			<Fragment>
@@ -326,6 +339,7 @@ class World extends Component {
 								onMouseUp={ this.handleMouseUp } 
 								onMouseMove={ this.handleMouseMove } 
 								onMouseLeave={ this.handleMouseUp } 
+								onTouchMove={ this.handleMouseDown }
 								onClick={ this.inspectCell }
 								onScroll={ this.zoomOnScroll }
 								ref={(n) => { this.worldRef = n }} 
@@ -333,7 +347,7 @@ class World extends Component {
 					
 					{ cells.map(cell => (
 					
-						<Cell x={ cell.x } y={ cell.y } size={ cellSize } key={`${ cell.x }, ${ cell.y }`} />
+						<Cell x={ cell.x } y={ cell.y } size={ cellSize } gen={ this.state.generation } key={`${ cell.x }, ${ cell.y }`} />
 					
 					))}
 
@@ -341,9 +355,10 @@ class World extends Component {
 
 				<button onClick={ this.toggleStart }> { this.state.isPlaying ? "Stop" : "Start" } </button>
 				<button onClick={ this.toggleErasing }> { this.state.isErasing ? "Draw" : "Erase" } </button>
-				<button onClick={ this.endWorld }> Clear </button>
-				<button onClick={ this.zoomOut }> Change Size </button>
-				<button> Inspect Cell </button>
+				<button onClick={ this.clearWorld }> Clear </button>
+				<button onClick={ this.randomisePattern }> Randomise </button>
+				<button onClick={ this.zoomOut } disabled> Change Size </button>
+				<button disabled> Inspect Cell </button>
 			</Fragment>
 		);
 	}
@@ -356,7 +371,34 @@ class Cell extends Component {
 
 	state = {
 
-		
+		born	: 0,
+		age		: 0
+	}
+
+	ageColors = () => {
+
+		const { age } = this.state
+
+		if(age > 5) {
+			return "cell--old";
+		} else if(age >= 3 && age <=5) {
+			return "cell--middle";
+		} else if(age <= 2) {
+			return "cell--young";
+		}
+	}
+
+	calcAge = () => (this.props.gen - this.state.born);
+
+	componentDidMount = () => {
+
+		this.setState({born: this.props.gen});
+		this.setState({age: 1});
+	}
+
+	componentDidUpdate = (prevProps) => {
+
+		if(prevProps.gen !== this.props.gen) this.setState({age: this.calcAge()});
 	}
 
 	render() {
@@ -367,7 +409,7 @@ class Cell extends Component {
 
 			<Fragment>
 
-				<div className="cell" style={{
+				<div className={`cell ${this.ageColors()}`} style={{
 
 					left	: `${size * x + 1}px`, 
 					top		: `${size * y + 1}px`, 
