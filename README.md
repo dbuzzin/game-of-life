@@ -17,17 +17,26 @@ A game of life simulator. Read the rules, draw in some patterns and click start 
 + Click and drag to add/remove living cells.
   + Button to switch between drawing and erasing.
 + Clear world button.
-+ Basic zoom out feature.
++ ~~Basic zoom out feature.~~ (Removed current while working on new one)
++ Randomise screen.
++ Shading based on age of cell.
 
 ### Coming Soon... (So far)
 
 + Make device responsive.
 + Zoom on scroll.
 + Speed adjust.
-+ Step through next generations.
-+ Randomise screen.
++ Rewind.
++ Step through next/last generations.
++ ~~Randomise screen.~~
++ More draw/edit functions.
+  + Draw straight lines.
+  + Drag to select.
+  + Paint/Erase multiple blocks.
 + Cell inspector.
-+ Option for shading based on age of cell.
++ ~~Option for shading based on age of cell.~~
++ Cue buttons for adding patterns
+  + Timed pattern adding.
 + Quick add known patterns.
 + Undo/Redo.
 + Save world.
