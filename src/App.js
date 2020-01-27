@@ -85,7 +85,7 @@ class World extends Component {
 		return cells;
 	}
 
-	snap
+	
 
 	getElemOffset = () => {
 		
